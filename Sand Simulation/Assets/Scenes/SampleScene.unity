@@ -213,7 +213,7 @@ MonoBehaviour:
   particleGOlist: []
   ParticleMass: 0.15
   ParticleRadius: 0.5
-  ParticleCount: 2
+  ParticleCount: 30
 --- !u!4 &249497049
 Transform:
   m_ObjectHideFlags: 0
@@ -832,7 +832,7 @@ Transform:
   m_GameObject: {fileID: 760678276}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 4.2204, y: 1, z: 3.1371}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -1028,15 +1028,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sandman
       objectReference: {fileID: 0}
+    - target: {fileID: 3990828433808195118, guid: 7ccbe407d6c99e74da42eba29cfe4d41,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3990828433808195117, guid: 7ccbe407d6c99e74da42eba29cfe4d41,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 6.3
       objectReference: {fileID: 0}
     - target: {fileID: 3990828433808195117, guid: 7ccbe407d6c99e74da42eba29cfe4d41,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.13
+      value: -0.19
       objectReference: {fileID: 0}
     - target: {fileID: 3990828433808195117, guid: 7ccbe407d6c99e74da42eba29cfe4d41,
         type: 3}
@@ -1083,5 +1088,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3990828433808195117, guid: 7ccbe407d6c99e74da42eba29cfe4d41,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.0489
+      objectReference: {fileID: 0}
+    - target: {fileID: 3990828433808195117, guid: 7ccbe407d6c99e74da42eba29cfe4d41,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.0489
+      objectReference: {fileID: 0}
+    - target: {fileID: 3990828433808195117, guid: 7ccbe407d6c99e74da42eba29cfe4d41,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.0489
+      objectReference: {fileID: 0}
+    - target: {fileID: 3990828433010768155, guid: 7ccbe407d6c99e74da42eba29cfe4d41,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5558b5711d37782468eeee5c2880e7d8, type: 2}
+    - target: {fileID: 3990828432459802597, guid: 7ccbe407d6c99e74da42eba29cfe4d41,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5558b5711d37782468eeee5c2880e7d8, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7ccbe407d6c99e74da42eba29cfe4d41, type: 3}

@@ -134,7 +134,7 @@ public class Particle
 
     public Vector3 GetFloorForces(ref Vector3 sumF_n)
     {
-        if (position.y < radius)
+        if (position.y < radius+1)
         {
             Debug.Log("y<0!");
             var distance = Vector3.Distance(new Vector3(position.x, 0, position.z), position);
