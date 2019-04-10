@@ -20,19 +20,28 @@ public class Particle
     public Quaternion orientation;
 
     public Vector3 COMVelocity;    //linear velocity
-    private Vector3 AngVelocity;
-    private Vector3 inv_inertia;
+    public Vector3 AngVelocity;
+    public Vector3 inv_inertia;
 
     public Vector3 Force_l;
-    private Vector3 Force_t;
+    public Vector3 Force_t;
     // public List<Particle> Particles;
 
     public float Diameter => radius * 2;
+    public float Ratio =>  Time.deltaTime/0.003f  ;
 
-    float kn = 50;
+   // private float kn => OGkn * Ratio;
+   // private float ys => OGys * Ratio;
+   // private float u => OGu * Ratio;
+   // private float ks => OGks * Ratio;
+
+    float kn = 500f;
     float ys = 3;
     float u = 0.05f;
     float ks = 20;
+          
+
+
     float alpha = 0.5f;
     float beta = 1.5f;
 
@@ -57,7 +66,7 @@ public class Particle
     public void Update(List<Particle> particles, bool fromCollisionCall = false)
     {
 
-
+        float ratio = Time.deltaTime / 0.003f;
 
 
         Vector3 sumF_n = Vector3.zero;
@@ -72,13 +81,14 @@ public class Particle
         GetStaticCollisionForces(ref sumF_n, ref sumF_n, kn, ys, u, ks, alpha, beta);
 
         //collision with other particles
-        GetParticleCollisionForces(particles, kn, ys, u, ks, alpha, beta, ref sumF_n, ref sumF_t);
+        GetParticleCollisionForces(particles, ref sumF_n, ref sumF_t);
 
         //add gravity and sum all the forces into linear force
         Vector3 gravity = new Vector3(0, -9.81f, 0) * mass;
         Force_l += gravity;
         Force_l += sumF_n;
     }
+
     public Vector3 CalcCollisionForce(Vector3 HitPoint, Vector3 hitNormal)
     {
         Vector3 sumF_n = Vector3.zero;
@@ -104,14 +114,19 @@ public class Particle
     {
         int mask = LayerMask.GetMask("CollisionObject");
         var coll = Physics.OverlapSphere(position, radius, mask);
-        Vector3 fn = Vector3.zero;
-        foreach (var collider in coll) Debug.Log($"coll with {collider.gameObject.name}");
+        // foreach (var collider in coll) 
 
         foreach (var collider in coll)
         {
+            Debug.Log($"coll with {collider.gameObject.name}");
             var hitP = collider.ClosestPointOnBounds(position);
+
             var contactNormal = (hitP - position).normalized;
-            if (contactNormal == Vector3.zero) contactNormal = -Vector3.up;
+            // if (hitP == position)
+
+            contactNormal = (collider.transform.position - position).normalized;
+
+            //  if (contactNormal == Vector3.zero) contactNormal = -Vector3.up;
 
             var distance = Vector3.Distance(hitP, position);
             //Vector3 contactNormal = new Vector3(0, -1, 0);
@@ -126,25 +141,84 @@ public class Particle
 
         }
 
-        Vector3 sumFN2 = Vector3.zero;
-        // GetFloorForces(ref  sumFN) ;
+
+
+        GetWallForces(ref sumFN);
+        GetFloorForces(ref sumFN);
+        //if (position.y < radius) position.y = radius;
+
+    }
+
+    public void GetWallForceX(ref Vector3 sumF_n)
+    {
+        float L = GameManagerScript.FieldWidth / 2f;
+        float left = position.x < 0 ? -1 : 1;
+        float wallX = left * L;
+        float distance = Mathf.Abs(position.x - wallX);
+
+        if (!(distance < radius)) return;
+        Debug.Log("WallX!");
+
+        Vector3 contactNormal = new Vector3(left * 1, 0, 0);
+        Vector3 relativeVelocity = COMVelocity;
+
+        float E = Mathf.Max(0, radius - distance);
+        float E2 = Vector3.Dot(relativeVelocity, contactNormal);
+
+        Vector3 F_n = -(kn * Mathf.Pow(E, beta) + ys * E2 * Mathf.Pow(E, alpha)) * contactNormal;
+
+        sumF_n += F_n;
+    }
+
+    public void GetWallForceZ(ref Vector3 sumF_n)
+    {
+        float L = GameManagerScript.FieldWidth / 2f;
+
+        float deep = position.z < 0 ? -1 : 1;
+        float wallX = deep * L;
+        float distance = Mathf.Abs(position.z - wallX);
+
+        if (!(distance < radius)) return;
+        Debug.Log("WallZ!");
+
+        Vector3 contactNormal = new Vector3(0, 0, deep * 1);
+        Vector3 relativeVelocity = COMVelocity;
+
+        float E = Mathf.Max(0, radius - distance);
+        float E2 = Vector3.Dot(relativeVelocity, contactNormal);
+
+        Vector3 F_n = -(kn * Mathf.Pow(E, beta) + ys * E2 * Mathf.Pow(E, alpha)) * contactNormal;
+
+        sumF_n += F_n;
+
+    }
+
+    public void GetWallForces(ref Vector3 sumF_n)
+    {
+        GetWallForceX(ref sumF_n);
+        GetWallForceZ(ref sumF_n);
+
 
 
     }
 
+
     public Vector3 GetFloorForces(ref Vector3 sumF_n)
     {
-        if (position.y < radius+1)
+        if (position.y <= radius)
         {
             Debug.Log("y<0!");
             var distance = Vector3.Distance(new Vector3(position.x, 0, position.z), position);
             Vector3 contactNormal = new Vector3(0, -1, 0);
             Vector3 relativeVelocity = COMVelocity;
 
-            float E = Mathf.Max(0, radius - distance);
+            //  float E = Mathf.Max(0, radius - distance);
+            float E = 0.5f - distance;
             float E2 = Vector3.Dot(relativeVelocity, contactNormal);
-
-            Vector3 F_n = -(kn * Mathf.Pow(E, beta) + ys * E2 * Mathf.Pow(E, alpha)) * contactNormal;
+           float ys2 = 10;
+            
+            Vector3 F_n1 = -(40 * Mathf.Pow(E, beta) + ys2 * E2 * Mathf.Pow(E, alpha)) * contactNormal;
+            Vector3 F_n = -(40 * Mathf.Pow(E, 3f / 2f) + 10 * E2 * Mathf.Pow(E, 1f / 2f)) * contactNormal;
 
             sumF_n += F_n;
         }
@@ -152,7 +226,7 @@ public class Particle
         return sumF_n;
     }
 
-    private void GetParticleCollisionForces(List<Particle> particles, float kn, float ys, float u, float ks, float alpha, float beta, ref Vector3 sumF_n, ref Vector3 sumF_t)
+    private void GetParticleCollisionForces(List<Particle> particles, ref Vector3 sumF_n, ref Vector3 sumF_t)
     {
         foreach (var other in particles)
         {
@@ -161,13 +235,13 @@ public class Particle
             Vector3 pos = other.position;
             float d = Vector3.Distance(position, pos);
 
-            if (d <= 2 * radius && d > 0)
+            if (d <= radius && d > 0)
             {
                 Vector3 contactNormal = Vector3.Normalize(pos - position);
                 contactNormal.Normalize();
 
                 //relative velocity
-                Vector3 V = (COMVelocity - other.COMVelocity);
+                Vector3 V = (COMVelocity - other.COMVelocity).normalized;
 
                 //xi values from paper
                 float E = Mathf.Max(radius - d, 0);
