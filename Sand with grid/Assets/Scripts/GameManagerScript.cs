@@ -122,6 +122,16 @@ public class GameManagerScript : MonoBehaviour
         }
     }
 
+    Quaternion scale(float a, Quaternion q)
+    {
+        return new Quaternion(q.x * a, q.y * a, q.z * a, q.w * a);
+    }
+
+    Quaternion add(Quaternion A, Quaternion B)
+    {
+        return new Quaternion(A.x + B.x, A.y + B.y, A.z + B.z, A.w + B.w);
+
+    }
 
     // Update is called once per frame
     void Update()
@@ -191,16 +201,7 @@ public class GameManagerScript : MonoBehaviour
 
         }
 
-        Quaternion scale(float a, Quaternion q)
-        {
-            return new Quaternion(q.x * a, q.y * a, q.z * a, q.w * a);
-        }
-
-        Quaternion add(Quaternion A, Quaternion B)
-        {
-            return new Quaternion(A.x + B.x, A.y + B.y, A.z + B.z, A.w + B.w);
-
-        }
+        
 
         for (int i = 0; i < particles.Count; i++)
         {
