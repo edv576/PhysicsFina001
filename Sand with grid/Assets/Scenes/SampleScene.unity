@@ -211,6 +211,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particleGOlist: []
+  sandMaterial: {fileID: 0}
+  newScale: 1
   ParticleMass: 0.15
   ParticleRadius: 0.5
   ParticleCount: 40

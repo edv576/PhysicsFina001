@@ -14,6 +14,9 @@ public class GameManagerScript : MonoBehaviour
     public List<GameObject> particleGOlist;
 
     public HashSet<int>[,,] ParticleGrid;
+    public Material sandMaterial = null;
+
+    public float newScale = 0.2f;
 
     // Start is called before the first frame update
     public float ParticleMass = 0.15f;
@@ -44,11 +47,18 @@ public class GameManagerScript : MonoBehaviour
 
                 //  x = 0.12f * i;
 
-                var p = new Particle(ParticleRadius, ParticleMass, new Vector3(x, y, z));
+                //var p = new Particle(ParticleRadius, ParticleMass, new Vector3(x, y, z));
+                var p = new Particle(ParticleRadius*newScale, ParticleMass*newScale, new Vector3(x, y, z));
                 particles.Add(p);
 
                 var GO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                GO.transform.localScale = new Vector3(GO.transform.localScale.x * newScale, GO.transform.localScale.y * newScale, GO.transform.localScale.z * newScale);
                 GO.transform.localPosition = particles[i].position;
+
+                if (sandMaterial != null)
+                {
+                    GO.GetComponent<Renderer>().material = sandMaterial;
+                }
 
                 //  GO.AddComponent<SphereCollider>();
                 GO.GetComponent<SphereCollider>().isTrigger = true;
